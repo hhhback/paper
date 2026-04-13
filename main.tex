@@ -61,6 +61,13 @@ Recent work on memory-augmented LLM agents has begun to address these challenges
 
 \begin{figure}[t]
   \centering
+  \includegraphics[width=\linewidth]{figures/method-comparison.png}
+  \caption{Comparison of persona construction approaches. Existing methods either inject the full interaction history into an LLM context (top-left) or retrieve chunked logs via RAG (bottom-left), both of which struggle with scale, noise, and cross-session preference aggregation. Our proposed hierarchical note memory (right) consolidates user activity into structured, taxonomy-grounded notes and constructs context-adaptive personas through selective path reading.}
+  \label{fig:comparison}
+\end{figure}
+
+\begin{figure}[t]
+  \centering
   \includegraphics[width=\linewidth]{figures/overview.png}
   \caption{Overview of the POI-centric hierarchical note memory and its maintenance workflow. The Memory Agent performs forward aggregation (signal extraction $\rightarrow$ hierarchical routing $\rightarrow$ note update) and backward consolidation (sibling merging $\rightarrow$ common trait elevation $\rightarrow$ stale pruning).}
   \label{fig:overview}
@@ -136,6 +143,13 @@ These findings motivate our architectural choice: structured hierarchical memory
 We propose a three-stage framework for constructing and maintaining POI-centric user personas from heterogeneous interaction logs. As illustrated in Figure~\ref{fig:overview}, the system consists of: (1)~\textbf{Signal Extraction}, which converts raw POI interaction data into structured preference profiles by separately processing explicit signals (user-written reviews) and implicit signals (click, save, and search logs); (2)~\textbf{Hierarchical Note Memory}, a persistent, taxonomy-grounded data structure that organizes extracted preferences into multi-level notes spanning broad lifestyle domains down to fine-grained subcategories; and (3)~\textbf{Memory Agent}, an LLM-driven controller that maintains the memory through bidirectional operations---forward aggregation of new signals into appropriate notes, and backward consolidation to preserve structural integrity. The Memory Agent also supports \textbf{context-adaptive persona construction}, generating purpose-specific user profiles by selectively reading from relevant portions of the hierarchy.
 
 The remainder of this section describes each component in detail: signal extraction (Section~3.2), the hierarchical note memory structure (Section~3.3), the forward aggregation pass (Section~3.4), the backward consolidation pass (Section~3.5), and persona construction (Section~3.6).
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\linewidth]{figures/memory-agent-workflow.png}
+  \caption{Illustration of the Memory Agent's forward and backward passes. \textit{Left}: initial hierarchical note memory with per-node notes indexed by POI category. \textit{Center}: the forward aggregation pass detects new user activity, routes extracted preferences to target nodes, and updates note content. \textit{Right}: the backward consolidation pass revises the tree structure, elevates common traits to parent nodes, and prunes stale leaves.}
+  \label{fig:workflow}
+\end{figure}
 
 
 \subsection{POI Interaction Signal Extraction}
