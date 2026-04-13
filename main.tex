@@ -151,14 +151,6 @@ We propose an end-to-end framework for POI-centric user persona construction and
 
 The remainder of this section describes each component in detail: signal extraction (Section~3.2), the hierarchical note memory structure (Section~3.3), the forward aggregation pass (Section~3.4), the backward consolidation pass (Section~3.5), and persona construction (Section~3.6).
 
-\begin{figure}[t]
-  \centering
-  \includegraphics[width=\linewidth]{figures/memory-agent-workflow.png}
-  \caption{Illustration of the Memory Agent's forward and backward passes. \textit{Left}: initial hierarchical note memory with per-node notes indexed by POI category. \textit{Center}: the forward aggregation pass detects new user activity, routes extracted preferences to target nodes, and updates note content. \textit{Right}: the backward consolidation pass revises the tree structure, elevates common traits to parent nodes, and prunes stale leaves.}
-  \label{fig:workflow}
-\end{figure}
-
-
 \subsection{POI Interaction Signal Extraction}
 
 User preferences toward places manifest through two fundamentally different modalities. We extract structured preference profiles from each modality independently before unifying them within the hierarchical memory. This dual-extraction approach follows the paradigm established by PersonaMem-v2~\cite{personamem-v2}, extended here with a third axis for demographic information and adapted to the POI domain where implicit behavioral signals are particularly abundant.
@@ -193,15 +185,24 @@ The base hierarchy defines Level~1 as the root node (representing the user as a 
 Each node in the hierarchy is associated with a \textit{Note}, a structured record that stores the accumulated preference knowledge for that category. A note contains the following fields:
 
 \begin{itemize}
-    \item \textbf{path}: the full hierarchical path (e.g., ``User $>$ Dining $>$ Korean''),
-    \item \textbf{user\_info}: demographic and factual attributes (populated \textit{only} at the root node; all sub-nodes are constrained to empty lists),
-    \item \textbf{summary}: a natural-language paragraph summarizing the user's preferences and behavioral patterns for this category, integrating both explicit and implicit signals,
+    \item \textbf{path}: the full hierarchical path (e.g., ``User $>$ Dining $>$ Korean Food''),
+    \item \textbf{user\_info}: demographic and factual attributes (populated \textit{only} at the root node; e.g., ``24-year-old male, works in distribution, frequently active near Gangnam Station and Hannam-dong''; all sub-nodes are constrained to empty lists),
+    \item \textbf{summary}: a natural-language paragraph summarizing the user's preferences and behavioral patterns for this category, integrating both explicit and implicit signals (e.g., for the Korean Food node: preferences for curry-based dishes and bold flavors, inferred from repeated visits and a review stating ``this place is legendary---I love the curry''),
     \item \textbf{keywords}: BM25-oriented keyword tags for retrieval,
     \item \textbf{updated\_count}: the number of times the note content has been substantively modified,
-    \item \textbf{recently\_updated}: the date of the most recent content update.
+    \item \textbf{recently\_updated}: the date of the most recent content update (e.g., the Korean Food note advances from 2025/02/19 to 2025/02/25 after new activity arrives, while the Tennis note, last updated on 2025/10/23, remains unchanged).
 \end{itemize}
 
+As illustrated in Figure~\ref{fig:workflow}, a user's initial memory may contain nodes such as \texttt{User $>$ Dining $>$ Korean Food} and \texttt{User $>$ Sports $>$ Tennis}, each holding independently tracked preference notes. When new activity arrives---for example, a curry restaurant review and visit on 2025/02/25---the forward pass selectively updates only the affected nodes (root and Korean Food), leaving unrelated nodes (Tennis) untouched. The backward pass subsequently verifies structural integrity and removes leaf nodes that have not been updated within a configurable staleness window.
+
 All notes for a user are stored atomically in a single Parquet file, enabling efficient bulk I/O. The tree structure metadata (parent-child relationships, node levels) is maintained in a separate hierarchy file. This separation allows the Memory Agent to load, modify, and persist the entire memory state in a single read-modify-write cycle per operation.
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\linewidth]{figures/memory-agent-workflow.png}
+  \caption{Concrete example of Memory Agent operation. \textit{Left}: initial hierarchical note memory with two Level-2 domains (Dining, Sports) and three leaf nodes (Korean Food, Chinese Food, Tennis), each holding a note with a timestamp and summary. \textit{Center}: the forward aggregation pass triggered by new 2025/02/25 activity (curry restaurant review, visit, and search)---only the root and Korean Food nodes are updated; Tennis is untouched. \textit{Right}: the backward consolidation pass restructures the tree, elevates common traits to parent nodes, and removes leaf nodes that have not received any update for $N$ months.}
+  \label{fig:workflow}
+\end{figure}
 
 
 \subsection{Memory Agent: Forward Aggregation}
