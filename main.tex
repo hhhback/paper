@@ -1,30 +1,33 @@
-\documentclass[11pt]{article}
-\usepackage[margin=1in]{geometry}
+\documentclass[manuscript,screen,review]{acmart}
 
-% Math and figures
-\usepackage{amsmath,amssymb}
-\usepackage{graphicx}
+%% ACM metadata
+\copyrightyear{2025}
+\acmYear{2025}
+\acmConference[RecSys '25]{Nineteenth ACM Conference on Recommender Systems}{October 6--10, 2025}{Chongqing, China}
+
+%% Additional packages (not bundled in acmart)
 \usepackage{tikz-cd}
 \usepackage{multicol}
-\usepackage{booktabs}
-\usepackage{hyperref}
 
-% Paragraphs
-\setlength{\parindent}{0pt}
-\setlength{\parskip}{1\baselineskip}
+%%% Title
+\title{POI-Centric Hierarchical Note-Based User Memory with Dynamic Routing and Trait Elevation}
 
-\title{POI-Centric Hierarchical Note-Based User Memory\\with Dynamic Routing and Trait Elevation}
-\author{Junguel Lee \\ Naver Corp \\ \texttt{junguel.lee@navercorp.com} \and Jungseok Lee \\ Naver Corp \\ \texttt{jungseok.lee@navercorp.com}}
-\date{}
+%%% Authors (single-blind for Industry Track)
+\author{Junguel Lee}
+\affiliation{%
+  \institution{Naver Corp}
+  \country{South Korea}
+}
+\email{junguel.lee@navercorp.com}
 
-\begin{document}
-\pagestyle{empty}
-\maketitle
+\author{Jungseok Lee}
+\affiliation{%
+  \institution{Naver Corp}
+  \country{South Korea}
+}
+\email{jungseok.lee@navercorp.com}
 
-%% ============================================================
-%% ABSTRACT
-%% ============================================================
-\section*{Abstract}
+\begin{abstract}
 Modeling user place preferences from large-scale POI (Point-of-Interest) interaction logs requires capturing fine-grained behavioral signals while organizing them into structured, updateable representations that evolve over time.
 Recent memory-augmented LLM agents~\cite{mem0,amem,personamem-v2} have shown that structured memory can outperform both full-context approaches~\cite{beyond-context-window} and flat retrieval systems for personalization tasks.
 We propose a \textbf{POI-centric Hierarchical Note-based Memory}, a structured memory architecture that transforms raw place interaction logs into dynamically maintained, multi-level preference representations.
@@ -37,6 +40,10 @@ This enables preference modeling at multiple abstraction levels, ranging from fi
 To ensure temporal consistency and structural integrity, we introduce a Memory Agent that autonomously manages the lifecycle of notes through two complementary processes: (1)~forward aggregation of new POI interaction signals into appropriate nodes and (2)~backward consolidation, conflict resolution, and pruning to prevent redundancy and preference drift.
 We further propose a POI-domain evaluation framework inspired by PersonaGym~\cite{personagym} that quantitatively measures alignment between hierarchical memory representations and real user behavioral patterns.
 Experimental results demonstrate that the proposed POI-centric hierarchical memory produces more coherent, adaptive, and human-aligned user place personas compared to full-context, flat-memory, and fixed-hierarchy baselines.
+\end{abstract}
+
+\begin{document}
+\maketitle
 
 
 %% ============================================================
@@ -335,7 +342,7 @@ We presented a POI-centric hierarchical note-based memory system for constructin
 %% ============================================================
 %% REFERENCES
 %% ============================================================
-\bibliographystyle{plain}
+\bibliographystyle{ACM-Reference-Format}
 
 \begin{thebibliography}{99}
 
