@@ -294,7 +294,7 @@ We compare against five baselines spanning the design space:
     \item \textbf{No-Memory}: LLM with only current session context (lower bound).
     \item \textbf{Full-Context}: All raw interaction logs placed in the LLM context window (quality upper bound, impractical at scale).
     \item \textbf{Flat-Memory}: Mem0-style~\cite{mem0} flat list with ADD/UPDATE/DELETE operations (tests hierarchy value).
-    \item \textbf{Fixed-Hierarchy}: PersonaMem-v2-style~\cite{personamem-v2} three-level tree with predefined fixed slots (tests dynamic routing value).
+    \item \textbf{Fixed-p}: PersonaMem-v2-style~\cite{personamem-v2} three-level tree with predefined fixed slots (tests dynamic routing value).
     \item \textbf{Ours (full)}: Dynamic routing + common trait elevation + three-axis separation.
 \end{itemize}
 
